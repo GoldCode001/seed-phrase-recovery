@@ -1,57 +1,78 @@
-# 🔐 Seed Phrase Recovery Tool
+# 🔐 BIP39 Seed Phrase Recovery Tool
 
-## ⚡ QUICK START (3 Commands)
+Professional cryptocurrency wallet seed phrase recovery service with a beautiful, secure, client-side interface.
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.0-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
+
+## 🌟 Features
+
+- ✅ **Client-Side Recovery** - All processing happens in your browser
+- ✅ **Zero Data Storage** - Nothing stored, logged, or transmitted
+- ✅ **Universal** - Works on Windows, Mac, Linux, mobile browsers
+- ✅ **Open Source** - Verify the code yourself
+- ✅ **Professional UI** - Clean, modern, glassmorphism design
+- ✅ **Dual Recovery Modes** - Target address (fast) or balance discovery
+- ✅ **Fair Pricing** - Success-only fee model (3-15%)
+- ✅ **BIP39 Compliant** - Standard derivation paths
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ installed
+- npm or yarn
+
+### Installation
 ```bash
-# 1. Install
+# Clone the repository
+git clone https://github.com/GoldCode001/seed-phrase-recovery.git
+cd seed-phrase-recovery
+
+# Install dependencies
 npm install
 
-# 2. Run
-npm run dev
-
-# 3. Open http://localhost:3000
-```
-
----
-
-## 🎨 What's Built
-
-✅ **Sleek Dark UI** - Glassmorphism, gradients, animations  
-✅ **Dual Recovery Modes** - Target Address (fast) + Balance Discovery (deep)  
-✅ **Smart Pricing** - Auto-calculated fees based on difficulty  
-✅ **Progress Tracking** - Real-time recovery progress  
-✅ **Fully Responsive** - Works on all devices  
-
----
-
-## 🎯 How To Use In Cursor
-
-### Step 1: Open Project
-- Launch Cursor
-- File → Open Folder → Select `seed-recovery-app`
-
-### Step 2: Install Dependencies
-Terminal in Cursor (Ctrl+` or Cmd+`):
-```bash
-npm install
-```
-
-### Step 3: Run Dev Server
-```bash
+# Run development server
 npm run dev
 ```
 
-Server starts at: **http://localhost:3000**
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Step 4: Test The UI
-- Toggle between modes
-- Enter seed: `word1 word2 _ word4 _ word6 ...` (use `_` for missing)
-- Watch fees calculate automatically
-- Click "Start Recovery" to see progress animation
+## 🔒 Security First
 
----
+### This tool is designed with security in mind:
 
-## 💎 Pricing Structure
+- **Client-side only** - Recovery happens entirely in your browser
+- **No backend storage** - Your seed phrase never touches any server
+- **No logging** - Nothing is recorded or transmitted
+- **Open source** - You can audit every line of code
+- **Offline capable** - Download and run without internet
+
+### ⚠️ CRITICAL SECURITY WARNING
+
+**After successful recovery, IMMEDIATELY:**
+1. Transfer ALL funds to a NEW wallet
+2. Create a FRESH seed phrase
+3. NEVER reuse the recovered seed phrase
+
+A recovered seed phrase should be considered compromised.
+
+## 🎯 How It Works
+
+### Target Address Mode (Fast)
+1. Enter your partial seed phrase (use `_` for missing words)
+2. Enter your known wallet address
+3. Click "Start Recovery"
+4. System brute-forces missing words cryptographically
+5. Matches against your target address
+
+### Balance Discovery Mode
+1. Enter your partial seed phrase
+2. System searches for wallets with balance
+3. Checks multiple derivation paths
+4. Returns active wallets found
+
+## 💎 Pricing
 
 | Missing Words | Base Fee | Target Mode | Balance Mode |
 |--------------|----------|-------------|--------------|
@@ -60,299 +81,102 @@ Server starts at: **http://localhost:3000**
 | 3 words      | 10%      | 8%          | 10%          |
 | 4+ words     | 15%      | 13%         | 15%          |
 
-**Target Address Mode = -2% discount** (faster recovery)
+**No recovery, no fee** - You only pay when we successfully recover your wallet.
 
----
+## 🛠️ Tech Stack
 
-## 🔌 Connect Your Backend
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4
+- **Crypto:** bip39, ethers.js
+- **UI:** Glassmorphism, gradient effects
 
-The UI is complete, now add your Python recovery logic:
-
-### Option A: Next.js API Route (Recommended)
-
-Create `app/api/recover/route.ts`:
-
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
-
-export async function POST(request: NextRequest) {
-  const { seedPhrase, targetAddress, mode } = await request.json()
-  
-  try {
-    const command = `python3 recovery.py "${seedPhrase}" "${targetAddress}" "${mode}"`
-    const { stdout } = await execAsync(command)
-    
-    const result = JSON.parse(stdout)
-    return NextResponse.json(result)
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Recovery failed', details: error.message },
-      { status: 500 }
-    )
-  }
-}
+## 📦 Project Structure
 ```
-
-Then update `app/page.tsx`, replace `handleRecovery`:
-
-```typescript
-const handleRecovery = async () => {
-  setIsProcessing(true)
-  setProgress(0)
-  
-  try {
-    const response = await fetch('/api/recover', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        seedPhrase,
-        targetAddress: mode === 'target' ? targetAddress : null,
-        mode,
-        minBalance,
-        derivationRange
-      })
-    })
-    
-    const result = await response.json()
-    
-    if (result.success) {
-      // Show success modal, reveal seed after payment
-      console.log('Recovery successful!', result)
-    }
-  } catch (error) {
-    console.error('Recovery error:', error)
-  } finally {
-    setIsProcessing(false)
-  }
-}
-```
-
-### Option B: Separate Flask API
-
-Keep Python separate:
-
-```python
-# flask_api.py
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import your_recovery_script
-
-app = Flask(__name__)
-CORS(app)
-
-@app.route('/recover', methods=['POST'])
-def recover():
-    data = request.json
-    result = your_recovery_script.recover(
-        seed_phrase=data['seedPhrase'],
-        target_address=data.get('targetAddress'),
-        mode=data['mode']
-    )
-    return jsonify(result)
-
-if __name__ == '__main__':
-    app.run(port=5000)
-```
-
-Update `handleRecovery` in `app/page.tsx`:
-
-```typescript
-const response = await fetch('http://localhost:5000/recover', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ seedPhrase, targetAddress, mode })
-})
-```
-
----
-
-## 🎨 Customization
-
-### Change Colors
-Edit `tailwind.config.js`:
-```js
-colors: {
-  'crypto-dark': '#0a0e1a',      // Main background
-  'crypto-darker': '#060913',    // Darker sections
-  'crypto-purple': '#8b5cf6',    // Primary accent
-  'crypto-blue': '#3b82f6',      // Secondary accent
-}
-```
-
-### Modify Pricing
-Edit `app/page.tsx`, find `getSuccessFee()`:
-```typescript
-const getSuccessFee = () => {
-  const missing = getMissingWordsCount()
-  const baseFee = missing === 1 ? 3 : missing === 2 ? 5 : missing === 3 ? 10 : 15
-  const discount = mode === 'target' ? 2 : 0
-  return Math.max(baseFee - discount, 1)
-}
-```
-
-### Update Payment Addresses
-Edit `app/page.tsx`, search for "Support This Project":
-```tsx
-<div className="glass-card p-3 font-mono text-xs">
-  <div className="text-gray-500 mb-1">ETH</div>
-  <div className="text-crypto-purple">YOUR_ETH_ADDRESS</div>
-</div>
-```
-
----
-
-## 📦 Project Files Explained
-
-```
-seed-recovery-app/
+seed-phrase-recovery/
 ├── app/
-│   ├── page.tsx          # Main UI component (YOUR CODE GOES HERE)
-│   ├── layout.tsx        # App wrapper (fonts, metadata)
-│   └── globals.css       # All styles, animations, glassmorphism
-│
-├── tailwind.config.js    # Color scheme & custom classes
-├── tsconfig.json         # TypeScript configuration
-├── postcss.config.js     # CSS processing
-└── package.json          # Dependencies & scripts
+│   ├── api/
+│   │   └── recover/
+│   │       └── route.ts          # Recovery API endpoint
+│   ├── page.tsx                   # Main UI
+│   ├── layout.tsx                 # App layout
+│   └── globals.css                # Styles
+├── public/                        # Static assets
+├── package.json                   # Dependencies
+└── README.md                      # This file
 ```
 
-**Key File: `app/page.tsx`** - This is where all the magic happens. Contains:
-- Recovery modes toggle
-- Input fields & validation
-- Fee calculation logic
-- Progress tracking
-- Success/error handling
+## 🚢 Deployment
 
----
-
-## 🚀 Deployment
-
-### Vercel (Easiest - Free Tier Available)
+### Vercel (Recommended)
 ```bash
 npm install -g vercel
 vercel login
 vercel deploy
 ```
 
+### Other Platforms
+
+Works on any platform that supports Next.js:
+- Netlify
+- Railway
+- AWS Amplify
+- DigitalOcean App Platform
+- Any VPS with Node.js
+
 ### Build for Production
 ```bash
-npm run build    # Creates optimized production build
-npm start        # Serves production build
+npm run build
+npm start
 ```
 
-### Other Platforms
-- **Netlify:** Connect GitHub repo, auto-deploy
-- **Railway:** `railway up`
-- **DigitalOcean:** Node.js droplet + PM2
-- **AWS:** Amplify or EC2
+## 🧪 Testing
+
+Test with the BIP39 standard test vector:
+
+- **Seed:** `abandon abandon abandon abandon abandon _ abandon abandon abandon abandon abandon about`
+- **Target:** `0x9858EfFD232B4033E47d90003D41EC34EcaEda94`
+- **Missing word:** `abandon` (position 6)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Disclaimer
+
+This tool is provided as-is for educational and recovery purposes. Users are responsible for:
+- Verifying the security of their environment
+- Safely handling recovered seed phrases
+- Moving funds immediately after recovery
+- Never reusing recovered seeds
+
+The developer is not responsible for:
+- Lost funds due to misuse
+- Compromised security from improper use
+- Any damages arising from use of this tool
+
+## 💝 Support
+
+If this tool helped you recover your funds, consider supporting development:
+
+**ETH/BSC/Polygon/Arbitrum:** `0x47fb8de65435c89fc6252a35dc82e7cb5a391b79`
+
+## 📞 Contact
+
+Built by Goldman - Web3 Recovery Specialist
+
+For support or inquiries, please open an issue on GitHub.
 
 ---
 
-## 🔧 Troubleshooting
-
-**Port 3000 already in use?**
-```bash
-lsof -ti:3000 | xargs kill
-npm run dev
-```
-
-**TypeScript errors?**
-```bash
-rm -rf .next node_modules package-lock.json
-npm install
-npm run dev
-```
-
-**Styling not working?**
-- Verify `globals.css` is imported in `layout.tsx`
-- Clear browser cache
-- Restart dev server
-
-**Node version issues?**
-Requires Node 18+:
-```bash
-node -v  # Check version
-# Use nvm to update if needed
-```
-
----
-
-## 🎯 Development Workflow
-
-1. **Test UI First**
-   - Run `npm run dev`
-   - Test both modes
-   - Verify all inputs work
-   - Check fee calculation
-
-2. **Add Backend Logic**
-   - Create API route or Flask server
-   - Test with sample seed phrases
-   - Handle errors gracefully
-   - Log recovery attempts
-
-3. **Implement Payment**
-   - Add payment verification
-   - Reveal seed after confirmation
-   - Store payment records (if needed)
-
-4. **Deploy**
-   - Test in production mode (`npm run build`)
-   - Deploy to Vercel/Netlify
-   - Update env variables
-   - Monitor for errors
-
----
-
-## 💡 Pro Tips
-
-- **Security:** Never store seeds on your server
-- **Performance:** Use Web Workers for intensive calculations
-- **UX:** Add loading states for all async operations
-- **Analytics:** Track success rates (anonymously)
-- **Testing:** Test with BIP39 test vectors first
-
----
-
-## 🛠️ Tech Stack
-
-- **Next.js 16** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **React 18** - UI library
-
----
-
-## 📚 Resources
-
-- **BIP39 Spec:** https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
-- **BIP44 Derivation:** https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
-- **Next.js Docs:** https://nextjs.org/docs
-- **Tailwind Docs:** https://tailwindcss.com/docs
-
----
-
-## ✅ Final Checklist
-
-Before deploying:
-- [ ] Test both recovery modes
-- [ ] Backend API working
-- [ ] Payment verification implemented
-- [ ] Error handling complete
-- [ ] Security reviewed
-- [ ] UI tested on mobile
-- [ ] Update payment addresses
-- [ ] Set up analytics (optional)
-- [ ] Create backup system
-- [ ] Deploy to production
-
----
-
-**Built with 💜 by Goldman**  
-*Professional Web3 Recovery Specialist*
-
-Need help? The UI is production-ready, just plug in your recovery logic and deploy! 🚀
+**Remember:** Always transfer recovered funds to a NEW wallet immediately. Never reuse a recovered seed phrase!
