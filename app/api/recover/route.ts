@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const missingPositions: number[] = []
     const knownWords: (string | null)[] = []
     
-    words.forEach((word, index) => {
+    words.forEach((word: string, index: number) => {
       if (word === '_' || word === 'UNKNOWN') {
         missingPositions.push(index)
         knownWords.push(null)
