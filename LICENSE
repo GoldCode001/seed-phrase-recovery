@@ -1,0 +1,49 @@
+MIT License
+
+Copyright (c) 2025 Goldman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+DISCLAIMER:
+
+This tool is provided for educational and legitimate recovery purposes only.
+
+Users are solely responsible for:
+- Verifying the security of their environment before use
+- Safely handling any recovered seed phrases
+- Immediately transferring recovered funds to new wallets
+- Never reusing recovered seed phrases
+- Complying with all applicable laws and regulations
+
+The developer makes no warranties about:
+- The success rate of recovery attempts
+- The security of recovered seed phrases
+- Any potential loss of funds
+
+By using this software, you agree that:
+- You will use it responsibly and legally
+- You understand the risks involved
+- The developer is not liable for any damages or losses
+- You will move all recovered funds to new wallets immediately
+
+SECURITY WARNING:
+A recovered seed phrase should always be considered compromised.
+Always create a new wallet with a fresh seed phrase and transfer all funds immediately.
